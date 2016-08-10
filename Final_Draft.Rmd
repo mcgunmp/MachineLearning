@@ -1,0 +1,895 @@
+---
+title: "Final_Draft"
+author: "Mike McGunagle"
+date: "April 28, 2016"
+output: pdf_document
+---
+
+
+
+```{r, include=FALSE}
+
+# install.packages("pitchRx")
+library(pitchRx)
+library(dplyr)
+
+#### DO NOT RUN: 
+##### SCRAPING CODE 
+######(Takes about 50 mins to scrape each baseball season, do not need to rewrite files)
+### Start Line 222
+
+
+
+# k<-seq(as.Date("2014/3/30"), as.Date("2014/10/05"), by = "week")
+# 
+# 
+# stats<-function(p){
+#  dat<-scrape(k[p], k[p+1])
+#   atbat<-dat$atbat
+#   action<-dat$action
+#   tab_atbat<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\atbat2014\\2014atbat",p,".csv", sep = "")
+#   write.csv(atbat, tab_atbat)
+#   tab_action<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\action2014\\2014action",p,".csv",sep="")
+#   write.csv(action, tab_action)
+#   pitch<-dat$pitch
+#   tab_pitch<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\pitch2014\\2014pitch",p,".csv",sep="")
+#   write.csv(pitch, tab_pitch)
+#  po <-dat$po
+#  tab_po<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\po2014\\2014po",p,".csv",sep="")
+#  write.csv(po, tab_po)
+#  runner<-dat$runner
+#  tab_runner<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\runner2014\\2014runner",p,".csv", sep="")
+#  write.csv(runner, tab_runner)
+#  }
+# 
+# 
+# 
+# p<-1
+# 
+# while(p <= 28)
+# {
+#   (stats(p))
+#   
+# 
+#   p<-p+1
+# }
+# 
+# 
+# 
+# ###2015 data
+# 
+# q<-seq(as.Date("2015-04-05"), as.Date("2015-10-11"), by = "week")
+# 
+# 
+# stats2<-function(w){
+#   dat<-scrape(q[w], q[w+1])
+#   atbat<-dat$atbat
+#   action<-dat$action
+#   tab_atbat<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\atbat2015\\2015atbat",w,".csv", sep = "")
+#   write.csv(atbat, tab_atbat)
+#   tab_action<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\action2015\\2015action",w,".csv",sep="")
+#   write.csv(action, tab_action)
+#   pitch<-dat$pitch
+#   tab_pitch<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\pitch2015\\2015pitch",w,".csv",sep="")
+#   write.csv(pitch, tab_pitch)
+#   po <-dat$po
+#   tab_po<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\po2015\\2015po",w,".csv",sep="")
+#   write.csv(po, tab_po)
+#   runner<-dat$runner
+#   tab_runner<-paste(file="C:\\Users\\Mike\\Desktop\\NEU\\Spring 2016\\Machine Learning\\final\\runner2015\\2015runner",w,".csv", sep="")
+#   write.csv(runner, tab_runner)
+# }
+# 
+# 
+# w<-1
+# 
+# while(w <= 28)
+# {
+#   (stats2(w))
+#   
+#   
+#   w<-w+1
+# }
+# 
+# 
+# ###merge files into one spread sheet
+# 
+# ## starting with 2014 atbat
+# 
+# setwd("C:/Users/Mike/Desktop/NEU/Spring 2016/Machine Learning/final/atbat2014")
+# 
+# 
+# Swings<-function(PP){
+# batting<-read.csv(paste("2014atbat",PP,".csv", sep = ""))
+# batting<-select(batting, pitcher, batter, num, b, s, o, start_tfs, start_tfs_zulu, stand,
+#                 b_height, p_throws,  event, event_es, home_team_runs, away_team_runs,
+#                 inning_side, inning, next_, score, event2, batter_name,   pitcher_name,
+#                 gameday_link, date, atbat_des)   
+# 
+# 
+# if(PP==1){
+# write.table(batting, "Batters2014.csv",append = F, row.names=F, col.names=T,  sep=",", fileEncoding = "UTF-8")
+# }
+# else {
+#   write.table(batting, "Batters2014.csv",append = T, row.names=F, col.names=F,  sep=",", fileEncoding = "UTF-8")
+# }
+# 
+# 
+# }
+# 
+# 
+# for (PP in 1:27){
+#   print(Swings(PP))
+# }
+# 
+# batters<-read.csv("Batters2014.csv")
+# head(batters)
+# dim(batters)
+# 
+# ### next 2014 pitch data
+# 
+# setwd("C:/Users/Mike/Desktop/NEU/Spring 2016/Machine Learning/final/pitch2014")
+# 
+# throws<-function(PP){
+#   pitching<-read.csv(paste("2014pitch",PP,".csv", sep = ""))
+#   pitching<-select(pitching, des, des_es, id, type, tfs, tfs_zulu,x,  y, sv_id, start_speed, end_speed,
+#                    sz_top, sz_bot, pfx_x, pfx_z, px,pz, x0, y0, z0, vx0,vy0,vz0,ax, ay, az, break_y,
+#                    break_angle, break_length, pitch_type, type_confidence, zone, nasty,
+#                    spin_dir, spin_rate, cc, mt, inning_side, inning, next_, num, on_1b, on_2b, 
+#                    on_3b, event_num, play_guid, gameday_link,
+#                    count)   
+#   
+#   
+#   if(PP==1){
+#     write.table(pitching, "Pitching2014.csv",append = F, row.names=F, col.names=T,  sep=",", fileEncoding = "UTF-8")
+#   }
+#   else {
+#     write.table(pitching, "Pitching2014.csv",append = T, row.names=F, col.names=F,  sep=",", fileEncoding = "UTF-8")
+#   }
+#   
+#   
+# }
+# 
+# 
+# for (PP in 1:27){
+#   print(throws(PP))
+# }
+# 
+# 
+# pitching<-read.csv("Pitching2014.csv")
+# head(pitching)
+# dim(pitching)
+# 
+# 
+# ######## 2015 batting data
+# 
+# setwd("C:/Users/Mike/Desktop/NEU/Spring 2016/Machine Learning/final/atbat2015")
+# 
+# 
+# Swings2015<-function(PP){
+#   batting<-read.csv(paste("2015atbat",PP,".csv", sep = ""))
+#   batting<-select(batting, pitcher, batter, num, b, s, o, start_tfs, start_tfs_zulu, stand,
+#                   b_height, p_throws,  event, event_es, home_team_runs, away_team_runs,
+#                   inning_side, inning, next_, score, event2, batter_name,   pitcher_name,
+#                   gameday_link, date, atbat_des)   
+#   
+#   
+#   if(PP==1){
+#     write.table(batting, "Batters2015.csv",append = F, row.names=F, col.names=T,  sep=",", fileEncoding = "UTF-8")
+#   }
+#   else {
+#     write.table(batting, "Batters2015.csv",append = T, row.names=F, col.names=F,  sep=",", fileEncoding = "UTF-8")
+#   }
+#   
+#   
+# }
+# 
+# 
+# for (PP in 1:27){
+#   print(Swings2015(PP))
+# }
+# 
+# batters2015<-read.csv("Batters2015.csv")
+# head(batters2015)
+# dim(batters2015)
+# 
+# #### 2015 pitching
+# 
+# setwd("C:/Users/Mike/Desktop/NEU/Spring 2016/Machine Learning/final/pitch2015")
+# 
+# throws2015<-function(PP){
+#   pitching<-read.csv(paste("2015pitch",PP,".csv", sep = ""))
+#   pitching<-select(pitching, des, des_es, id, type, tfs, tfs_zulu,x,  y, sv_id, start_speed, end_speed,
+#                    sz_top, sz_bot, pfx_x, pfx_z, px,pz, x0, y0, z0, vx0,vy0,vz0,ax, ay, az, break_y,
+#                    break_angle, break_length, pitch_type, type_confidence, zone, nasty,
+#                    spin_dir, spin_rate, cc, mt, inning_side, inning, next_, num, on_1b, on_2b, 
+#                    on_3b, event_num, play_guid, gameday_link,
+#                    count)   
+#   
+#   
+#   if(PP==1){
+#     write.table(pitching, "Pitching2015.csv",append = F, row.names=F, col.names=T,  sep=",", fileEncoding = "UTF-8")
+#   }
+#   else {
+#     write.table(pitching, "Pitching2015.csv",append = T, row.names=F, col.names=F,  sep=",", fileEncoding = "UTF-8")
+#   }
+#   
+#   
+# }
+# 
+# 
+# for (PP in 1:27){
+#   print(throws2015(PP))
+# }
+# 
+# 
+# pitching2015<-read.csv("Pitching2015.csv")
+# head(pitching2015)
+# dim(pitching2015)
+# 
+# ###move back to final directory
+
+
+###########################
+####################
+##############END
+
+require(ggplot2)
+
+require(class)
+require(curl)
+library(caret)
+##################
+
+require(dplyr)
+
+setwd("C:/Users/Mike/Desktop/NEU/Spring 2016/Machine Learning/final")
+
+# write.csv(pitching2015, "Pitching2015.csv")
+# write.csv(pitching, "Pitching2014.csv")
+# write.csv(batters2015, "Batters2015.csv")
+# write.csv(batters, "Batters2014.csv")
+
+atbats2014<-read.csv("Batters2014.csv", stringsAsFactors = TRUE)
+atbats2015<-read.csv("Batters2015.csv", stringsAsFactors = TRUE)
+pitches2014<-read.csv("Pitching2014.csv", stringsAsFactors = TRUE)
+pitches2015<-read.csv("Pitching2015.csv", stringsAsFactors = TRUE)
+
+
+dim(atbats2014)
+dim(atbats2015)
+dim(pitches2014)
+dim(pitches2015)
+
+
+
+###2014 Data
+throwers<-select(pitches2014, pitch_type, count,  num, gameday_link, des, inning)
+swingers<-select(atbats2014, b, s, o, stand, batter, pitcher_name, batter_name, num, gameday_link)
+MLB2014 <- swingers  %>% inner_join(throwers, ., by = c("num", "gameday_link"))
+# write.csv(MLB2014,"2014MLBdata.csv")
+
+
+####2015 Data
+
+
+throwers2015<-select(pitches2015, pitch_type, count,  num, gameday_link, des, inning)
+swingers2015<-select(atbats2015,  b,s, o, stand, batter, pitcher_name, batter_name, num, gameday_link)
+MLB2015 <- swingers2015  %>% inner_join(throwers2015, ., by = c("num", "gameday_link"))
+# write.csv(MLB2015,"2015MLBdata.csv")
+
+#############
+kluber <- swingers %>%filter(pitcher_name == "Corey Kluber")%>% inner_join(throwers, ., by = c("num", "gameday_link"))
+MadBum <- swingers %>%filter(pitcher_name == "Madison Bumgarner")%>% inner_join(throwers, ., by = c("num", "gameday_link"))
+
+kluber2015 <- swingers2015 %>%filter(pitcher_name == "Corey Kluber")%>% inner_join(throwers2015, ., by = c("num", "gameday_link"))
+MadBum2015 <- swingers2015 %>%filter(pitcher_name == "Madison Bumgarner")%>% inner_join(throwers2015, ., by = c("num", "gameday_link"))
+
+###########################
+
+str(kluber)
+
+kluber$count1<-factor(kluber$count, labels=(1:length(levels(factor(kluber$count)))))
+kluber$des1<-factor(kluber$des, labels=(1:length(levels(factor(kluber$des)))))
+kluber$stand1<-factor(kluber$stand, labels=(1:length(levels(factor(kluber$stand)))))
+kluber$outs1<-factor(kluber$o, labels=(1:length(levels(factor(kluber$o)))))
+kluber$inning1<-factor(kluber$inning, labels=(1:length(levels(factor(kluber$inning)))))
+kluber$pitch_type1<-factor(kluber$pitch_type, labels=(1:length(levels(factor(kluber$pitch_type)))))
+kluber$count2<-as.numeric(kluber$count1)
+kluber$des2<-as.numeric(kluber$des1)
+kluber$stand2<-as.numeric(kluber$stand1)
+kluber$outs2<-as.numeric(kluber$outs1)
+kluber$inning2<-as.numeric(kluber$inning1)
+kluber<-(mutate(kluber, prev_pitch = lag(pitch_type1)))
+kluber<-kluber[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,25,20,21,22,23,24)]
+
+str(kluber)
+head(kluber)
+
+str(kluber2015)
+
+
+kluber2015$count1<-factor(kluber2015$count, labels=(1:length(levels(factor(kluber2015$count)))))
+kluber2015$des1<-factor(kluber2015$des, labels=(1:length(levels(factor(kluber2015$des)))))
+kluber2015$stand1<-factor(kluber2015$stand, labels=(1:length(levels(factor(kluber2015$stand)))))
+kluber2015$outs1<-factor(kluber2015$o, labels=(1:length(levels(factor(kluber2015$o)))))
+kluber2015$inning1<-factor(kluber2015$inning, labels=(1:length(levels(factor(kluber2015$inning)))))
+kluber2015$pitch_type1<-factor(kluber2015$pitch_type, labels=(1:length(levels(factor(kluber2015$pitch_type)))))
+kluber2015$count2<-as.numeric(kluber2015$count1)
+kluber2015$des2<-as.numeric(kluber2015$des1)
+kluber2015$stand2<-as.numeric(kluber2015$stand1)
+kluber2015$outs2<-as.numeric(kluber2015$outs1)
+kluber2015$inning2<-as.numeric(kluber2015$inning1)
+kluber2015<-(mutate(kluber2015, prev_pitch = lag(pitch_type1)))
+kluber2015<-kluber2015[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,25,20,21,22,23,24)]
+
+
+
+
+
+
+###########
+########
+########
+
+# str(kluber)
+# str(kluber2015)
+# 
+# 
+# 
+# kluber.scale<-na.omit(kluber)
+# kluberpitch<-kluber.scale$pitch_type
+# kluber.scale<-as.data.frame(lapply(kluber.scale[20:24], scale))
+# kluber.scale$pitch_type<-c(kluberpitch)
+# 
+# 
+# 
+# kluber.scale2015<-na.omit(kluber2015)
+# kluberpitch2015<-kluber.scale2015$pitch_type
+# kluber.scale2015<-as.data.frame(lapply(kluber.scale2015[20:24], scale))
+# kluber.scale2015$pitch_type<-c(kluberpitch2015)
+# 
+# 
+# table(kluber$pitch_type)
+# table(kluber2015$pitch_type)
+# head(kluber.scale)
+# 
+# 
+# 
+# 
+# cKluber.train<-kluber.scale[1:3000,]
+# cKluber.test<-kluber.scale2015[1:3000,]
+# cKluber.train.target<-kluber.scale[1:3000,c(6)]
+# cKluber.test.target<-kluber.scale2015[1:3000,c(6)]
+# #cKluber.test.target
+# 
+# k<-5
+# knn.m1<-knn(train = cKluber.train, test = cKluber.test,cKluber.train.target,k)
+# #knn.m1
+# length(knn.m1)
+# regknncm<-table(cKluber.test.target,knn.m1)
+# regknncm
+# regknnconf<-confusionMatrix(cKluber.test.target,knn.m1)
+
+#############
+###knncat version try
+library(knncat)
+str(kluber)
+kluber.factor<-kluber[14:20]
+
+kluber.factor<-na.omit(kluber.factor)
+
+kluber.factor2015<-kluber2015[14:20]
+
+kluber.factor2015<-na.omit(kluber.factor2015)
+
+kluber.factor<-kluber.factor[1:3000,]
+kluber.factor2015<-kluber.factor2015[1:3000,]
+
+
+
+syncat <- knncat (kluber.factor, classcol=6)
+syncat
+
+
+
+synpred <- predict (syncat, kluber.factor, kluber.factor2015, train.classcol=6,
+                    newdata.classcol=6)
+
+table (synpred, kluber.factor2015$pitch_type1)
+
+plot(synpred)
+
+kluber_knncat<-confusionMatrix(synpred, kluber.factor2015$pitch_type1 )
+mypitches<-(as.character(unique(kluber$pitch_type)))
+mypitches<-na.omit(mypitches)
+colnames(kluber_knncat$table)<-c(unique(mypitches))
+rownames(kluber_knncat$table)<-c(unique(mypitches))
+rownames(kluber_knncat$byClass)<-c(paste("Class:",(unique(mypitches))))
+kluber_knncat
+
+codekey<-(unique(kluber$pitch_type))
+
+codekey2<-unique(kluber$pitch_type1)
+#########
+
+require(e1071)
+require(caret)
+## Categorical data only:
+# data(HouseVotes84, package = "mlbench")
+# model <- naiveBayes(Class ~ ., data = HouseVotes84)
+# predict(model, HouseVotes84[1:10,])
+# predict(model, HouseVotes84[1:10,], type = "raw")
+# 
+# pred <- predict(model, HouseVotes84)
+# table(pred, HouseVotes84$Class)
+######  Works!!!
+str(kluber)
+klubot<-select(kluber, pitch_type1, count, stand, des1, stand1, outs1, inning1, prev_pitch)
+klubot2015<-select(kluber2015, pitch_type1, count, stand, des1, stand1, outs1, inning1, prev_pitch)
+klubot2<-rbind(klubot[1:3000,], klubot2015[1:3000,])
+head(klubot2015)
+
+model <- naiveBayes(pitch_type1 ~ ., data = klubot[1:3000,])
+
+# predict(model, klubot2[3001:6000,])
+# predict(model, klubot2[1:3000,], type = "raw")
+
+pred <- predict(model, klubot2015[1:3000,])
+
+k<-table(pred,kluber$pitch_type[1:3000])
+k
+
+kluber_nb<-confusionMatrix(pred,klubot$pitch_type[1:3000])
+
+
+
+
+
+mypitches<-(as.character(unique(kluber$pitch_type)))
+mypitches<-na.omit(mypitches)
+colnames(kluber_nb$table) <- c(unique(mypitches))
+rownames(kluber_nb$table) <- c(unique(mypitches))
+rownames(kluber_nb$byClass)<-c(paste("Class:",(unique(mypitches))))
+kluber_nb
+######
+#### RANDOM FOREST
+
+#########
+library(randomForest)
+kluber.factor<-kluber[14:20]
+
+kluber.factor<-na.omit(kluber.factor)
+
+kluber.factor2015<-kluber2015[14:20]
+
+kluber.factor2015<-na.omit(kluber.factor2015)
+
+kluber.factor<-kluber.factor[1:3000,]
+kluber.factor2015<-kluber.factor2015[1:3000,]
+
+r <- randomForest(pitch_type1 ~., data=kluber.factor, importance=TRUE, do.trace=100, ntree=100)
+#print(r)
+
+predictions2 <- predict(r, kluber.factor2015)
+table(kluber.factor2015$pitch_type1, predictions2)
+kluber_tree_matrix<-confusionMatrix(kluber.factor2015$pitch_type1, predictions2)
+partialPlot(r, kluber.factor, pitch_type1, "3")
+t <- getTree(r, k=2) # get the second tree
+#print(t)
+treesize(r) # size of trees of the ensemble
+hist(treesize(r))
+
+colnames(kluber_tree_matrix$table)<-c(unique(mypitches))
+rownames(kluber_tree_matrix$table)<-c(unique(mypitches))
+rownames(kluber_tree_matrix$byClass)<-c(paste("Class:",(unique(mypitches))))
+kluber_tree_matrix
+
+library("e1071") # to access 'tune' method
+############### WARNING  #################
+# system.time(tuned.r <- tune(randomForest, train.x = pitch_type1 ~ .,
+ #                              data = kluber.factor,
+  #                             validation.x = kluber.factor2015))
+# user  system elapsed 
+# 405.83    0.39  408.56 
+# 409/60
+# [1] 6.816667
+
+
+tuned.r <- tune(randomForest, train.x = pitch_type1 ~ .,
+                data = kluber.factor,
+                validation.x = kluber.factor2015)
+
+best.model <- tuned.r$best.model
+RFpredictions <- predict(best.model, kluber.factor2015)
+table.random.forest <- table(kluber.factor2015$pitch_type1, RFpredictions)
+table.random.forest
+# computing overall error:
+error.rate <- 1 - sum(diag(as.matrix(table.random.forest))) / sum(table.random.forest)
+error.rate
+kluber_RF<-confusionMatrix(kluber.factor2015$pitch_type1, RFpredictions)
+colnames(kluber_RF$table)<-c(unique(mypitches))
+rownames(kluber_RF$table)<-c(unique(mypitches))
+rownames(kluber_RF$byClass)<-c(paste("Class:",(unique(mypitches))))
+kluber_RF
+
+###################################               #########################
+#####################          Madison Bumgarner          ##########################
+#######################################         ####################################
+
+
+
+str(MadBum)
+
+MadBum$count1<-factor(MadBum$count, labels=(1:length(levels(factor(MadBum$count)))))
+MadBum$des1<-factor(MadBum$des, labels=(1:length(levels(factor(MadBum$des)))))
+MadBum$stand1<-factor(MadBum$stand, labels=(1:length(levels(factor(MadBum$stand)))))
+MadBum$outs1<-factor(MadBum$o, labels=(1:length(levels(factor(MadBum$o)))))
+MadBum$inning1<-factor(MadBum$inning, labels=(1:length(levels(factor(MadBum$inning)))))
+MadBum$pitch_type1<-factor(MadBum$pitch_type, labels=(1:length(levels(factor(MadBum$pitch_type)))))
+MadBum$count2<-as.numeric(MadBum$count1)
+MadBum$des2<-as.numeric(MadBum$des1)
+MadBum$stand2<-as.numeric(MadBum$stand1)
+MadBum$outs2<-as.numeric(MadBum$outs1)
+MadBum$inning2<-as.numeric(MadBum$inning1)
+MadBum<-(mutate(MadBum, prev_pitch = lag(pitch_type1)))
+MadBum<-MadBum[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,25,20,21,22,23,24)]
+
+str(MadBum)
+head(MadBum)
+
+str(MadBum2015)
+
+
+MadBum2015$count1<-factor(MadBum2015$count, labels=(1:length(levels(factor(MadBum2015$count)))))
+MadBum2015$des1<-factor(MadBum2015$des, labels=(1:length(levels(factor(MadBum2015$des)))))
+MadBum2015$stand1<-factor(MadBum2015$stand, labels=(1:length(levels(factor(MadBum2015$stand)))))
+MadBum2015$outs1<-factor(MadBum2015$o, labels=(1:length(levels(factor(MadBum2015$o)))))
+MadBum2015$inning1<-factor(MadBum2015$inning, labels=(1:length(levels(factor(MadBum2015$inning)))))
+MadBum2015$pitch_type1<-factor(MadBum2015$pitch_type, labels=(1:length(levels(factor(MadBum2015$pitch_type)))))
+MadBum2015$count2<-as.numeric(MadBum2015$count1)
+MadBum2015$des2<-as.numeric(MadBum2015$des1)
+MadBum2015$stand2<-as.numeric(MadBum2015$stand1)
+MadBum2015$outs2<-as.numeric(MadBum2015$outs1)
+MadBum2015$inning2<-as.numeric(MadBum2015$inning1)
+MadBum2015<-(mutate(MadBum2015, prev_pitch = lag(pitch_type1)))
+MadBum2015<-MadBum2015[c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,25,20,21,22,23,24)]
+
+
+
+
+
+
+###########
+########
+########
+
+# str(MadBum)
+# str(MadBum2015)
+# 
+# 
+# 
+# MadBum.scale<-na.omit(MadBum)
+# MadBumpitch<-MadBum.scale$pitch_type
+# MadBum.scale<-as.data.frame(lapply(MadBum.scale[20:24], scale))
+# MadBum.scale$pitch_type<-c(MadBumpitch)
+# 
+# 
+# 
+# MadBum.scale2015<-na.omit(MadBum2015)
+# MadBumpitch2015<-MadBum.scale2015$pitch_type
+# MadBum.scale2015<-as.data.frame(lapply(MadBum.scale2015[20:24], scale))
+# MadBum.scale2015$pitch_type<-c(MadBumpitch2015)
+# 
+# 
+# table(MadBum$pitch_type)
+# table(MadBum2015$pitch_type)
+# head(MadBum.scale)
+# 
+# 
+# 
+# 
+# cMadBum.train<-MadBum.scale[1:3000,]
+# cMadBum.test<-MadBum.scale2015[1:3000,]
+# cMadBum.train.target<-MadBum.scale[1:3000,c(6)]
+# cMadBum.test.target<-MadBum.scale2015[1:3000,c(6)]
+# #cMadBum.test.target
+# 
+# k<-5
+# knn.m1<-knn(train = cMadBum.train, test = cMadBum.test,cMadBum.train.target,k)
+# #knn.m1
+# length(knn.m1)
+# regknncm<-table(cMadBum.test.target,knn.m1)
+# regknncm
+# regknnconf<-confusionMatrix(cMadBum.test.target,knn.m1)
+
+#############
+###knncat version try
+library(knncat)
+str(MadBum)
+MadBum.factor<-MadBum[14:20]
+
+MadBum.factor<-na.omit(MadBum.factor)
+
+MadBum.factor2015<-MadBum2015[14:20]
+
+MadBum.factor2015<-na.omit(MadBum.factor2015)
+
+MadBum.factor<-MadBum.factor[1:3000,]
+MadBum.factor2015<-MadBum.factor2015[1:3000,]
+
+
+
+syncat <- knncat (MadBum.factor, classcol=6)
+syncat
+
+
+
+synpred <- predict (syncat, MadBum.factor, MadBum.factor2015, train.classcol=6,
+                    newdata.classcol=6)
+
+table (synpred, MadBum.factor2015$pitch_type1)
+
+plot(synpred)
+
+MadBum_knncat<-confusionMatrix(synpred, MadBum.factor2015$pitch_type1 )
+mypitches<-(as.character(unique(MadBum$pitch_type)))
+mypitches<-na.omit(mypitches)
+colnames(MadBum_knncat$table)<-c(unique(mypitches))
+rownames(MadBum_knncat$table)<-c(unique(mypitches))
+rownames(MadBum_knncat$byClass)<-c(paste("Class:",(unique(mypitches))))
+MadBum_knncat
+
+knn_cat_result<-data.frame(c(kluber_knncat$overall['Accuracy']), (MadBum_knncat$overall['Accuracy']))
+colnames(knn_cat_result)<-c("Corey Kluber", "Madison Bumgarner")
+knn_cat_p<-data.frame(c(kluber_knncat$overall['AccuracyPValue']), (MadBum_knncat$overall['AccuracyPValue']))
+colnames(knn_cat_p)<-c("Corey Kluber", "Madison Bumgarner")
+knn_cat_result<-rbind(knn_cat_result,knn_cat_p)
+rownames(knn_cat_result)<-c("Accuracy","P-Value")
+
+#Corey Kluber pitch prediction table
+kluber_knncat$table;
+
+#Madison Bumgarner's pitch prediction table
+MadBum_knncat$table
+
+
+#########
+
+require(e1071)
+require(caret)
+## Categorical data only:
+# data(HouseVotes84, package = "mlbench")
+# model <- naiveBayes(Class ~ ., data = HouseVotes84)
+# predict(model, HouseVotes84[1:10,])
+# predict(model, HouseVotes84[1:10,], type = "raw")
+# 
+# pred <- predict(model, HouseVotes84)
+# table(pred, HouseVotes84$Class)
+######  Works!!!
+str(MadBum)
+madison<-select(MadBum, pitch_type1, count, stand, des1, stand1, outs1, inning1, prev_pitch)
+madison2015<-select(MadBum2015, pitch_type1, count, stand, des1, stand1, outs1, inning1, prev_pitch)
+madison2<-rbind(madison[1:3000,], madison2015[1:3000,])
+head(madison2015)
+
+model <- naiveBayes(pitch_type1 ~ ., data = madison[1:3000,])
+
+# predict(model, madison2[3001:6000,])
+# predict(model, madison2[1:3000,], type = "raw")
+
+pred <- predict(model, madison2015[1:3000,])
+
+k<-table(pred,MadBum$pitch_type[1:3000])
+k
+
+MadBum_nb<-confusionMatrix(pred,madison$pitch_type[1:3000])
+
+
+
+
+
+mypitches<-(as.character(unique(MadBum$pitch_type)))
+mypitches<-na.omit(mypitches)
+colnames(MadBum_nb$table) <- c(unique(mypitches))
+rownames(MadBum_nb$table) <- c(unique(mypitches))
+rownames(MadBum_nb$byClass)<-c(paste("Class:",(unique(mypitches))))
+MadBum_nb
+
+nb_result<-data.frame(c(kluber_nb$overall['Accuracy']), (MadBum_nb$overall['Accuracy']))
+colnames(nb_result)<-c("Corey Kluber", "Madison Bumgarner")
+nb_p<-data.frame(c(kluber_nb$overall['AccuracyPValue']), (MadBum_nb$overall['AccuracyPValue']))
+colnames(nb_p)<-c("Corey Kluber", "Madison Bumgarner")
+nb_result<-rbind(nb_result,nb_p)
+rownames(nb_result)<-c("Accuracy","P-Value")
+nb_result
+######
+#### RANDOM FOREST
+
+#########
+library(randomForest)
+MadBum.factor<-MadBum[14:20]
+
+MadBum.factor<-na.omit(MadBum.factor)
+
+MadBum.factor2015<-MadBum2015[14:20]
+
+MadBum.factor2015<-na.omit(MadBum.factor2015)
+
+MadBum.factor<-MadBum.factor[1:3000,]
+MadBum.factor2015<-MadBum.factor2015[1:3000,]
+
+r <- randomForest(pitch_type1 ~., data=MadBum.factor, importance=TRUE, do.trace=100, ntree=100)
+#print(r)
+
+predictions2 <- predict(r, MadBum.factor2015)
+table(MadBum.factor2015$pitch_type1, predictions2)
+MadBum_tree_matrix<-confusionMatrix(MadBum.factor2015$pitch_type1, predictions2)
+partialPlot(r, MadBum.factor, pitch_type1, "3")
+t <- getTree(r, k=2) # get the second tree
+#print(t)
+treesize(r) # size of trees of the ensemble
+hist(treesize(r))
+
+colnames(MadBum_tree_matrix$table)<-c(unique(mypitches))
+rownames(MadBum_tree_matrix$table)<-c(unique(mypitches))
+rownames(MadBum_tree_matrix$byClass)<-c(paste("Class:",(unique(mypitches))))
+MadBum_tree_matrix
+
+
+library("e1071") # to access 'tune' method
+############### WARNING  #################
+# system.time(tuned.r <- tune(randomForest, train.x = pitch_type1 ~ .,
+#                              data = MadBum.factor,
+#                             validation.x = MadBum.factor2015))
+# user  system elapsed 
+# 405.83    0.39  408.56 
+# 409/60
+# [1] 6.816667
+
+
+tuned.r <- tune(randomForest, train.x = pitch_type1 ~ .,
+                data = MadBum.factor,
+                validation.x = MadBum.factor2015)
+
+best.model <- tuned.r$best.model
+RFpredictions <- predict(best.model, MadBum.factor2015)
+table.random.forest <- table(MadBum.factor2015$pitch_type1, RFpredictions)
+table.random.forest
+# computing overall error:
+error.rate <- 1 - sum(diag(as.matrix(table.random.forest))) / sum(table.random.forest)
+error.rate
+MadBum_RF<-confusionMatrix(MadBum.factor2015$pitch_type1, RFpredictions)
+colnames(MadBum_RF$table)<-c(unique(mypitches))
+rownames(MadBum_RF$table)<-c(unique(mypitches))
+rownames(MadBum_RF$byClass)<-c(paste("Class:",(unique(mypitches))))
+MadBum_RF
+
+RF_result<-data.frame(c(kluber_RF$overall['Accuracy']), (MadBum_RF$overall['Accuracy']))
+colnames(RF_result)<-c("Corey Kluber", "Madison Bumgarner")
+RF_p<-data.frame(c(kluber_RF$overall['AccuracyPValue']), (MadBum_RF$overall['AccuracyPValue']))
+colnames(RF_p)<-c("Corey Kluber", "Madison Bumgarner")
+RF_result<-rbind(RF_result,RF_p)
+rownames(RF_result)<-c("Accuracy","P-Value")
+RF_result
+
+
+```
+
+#Throw Them Heat Ricky! Guessing the next pitch in baseball.
+
+##Abstract:
+
+Through the use of machine learning, we can improve the guessing of what the next pitch a pitcher will throw in the game of baseball. This study is concerned with a select number of pitchers who pitched in both the 2014 and 2015 seasons, and threw at a high level (leaders in ERA or wins, such as Madison Bumgarner, and Corey Kluber).  By using advanced algorithms, with statsical analsysis we can see if an improvement was made using machine learning techniques.  Using such techniques as random forests, k-nearest neighbor (kNN), and Naïve Bayes, we can see if any of these algorithms can improve pitch guessing.
+
+
+ ##Introduction:
+###Previous work: 
+Hitting is a fundamental of baseball.  If a batter knows what movement the ball will have coming at him, he will be more likely to make contact with the ball, and potentially get on base, or even score a run.  By understanding which pitch is thrown, and when, a lot of the guess is taken out of the game.  In 2016 Major League Baseball will start allowing iPads into dugouts for the first time (Chew, 2016).  With the increase in technology, teams will have the opportunity to preload stats and other information, that will be at their fingertips.  Imagine if a team had a matrix preloaded that stated what a pitcher would do on a 2-2 count, in the second inning, with a runner on second, left handed bat at the plate, a tied game, with one out.  The team would have an advantage to know a curveball might be coming their way.  Currently batters position themselves into hitters counts, and pitchers count.  We know that when there are more balls then strikes, (a hitter's count) the pitcher is more likely to throw a fastball, while when its reverse the count is more strikes than balls (say 0-2), the hitter is more likely to see something with more movement, such as a curve ball or slider.  
+
+There has been a fair amount of work done on this question, but not too many actual research papers.  There are a lot of blogs about using advanced analytics to capture what is happening in baseball, but little scientific research into the actual guessing of the next pitch.  In March 2012, Gartheeban and some colleagues proposed an idea that Support Vector Machine (SVM) learning could increase the ability to guess what the next pitch over a naïve Bayes model.  Gartheeban's model increased pitcher prediction from 59.5% in naïve, to 70% in the SVM model (Gartheeban, 2012).   In March 2012 Attarian presented a paper on pitch sequencing using k Nearest Neighbor (kNN) using Manhattan distance.  He was able to improve his results by 4% over naïve Bayes. In a March 2015 paper for the journal of sports, Brock used Linear Regression Analysis and SVM to predict what a pitchers pitch would be in a certain situation.  This study analyzed pitcher predictability in three general pitch count situations: (1) when the batter is ahead (more balls than strikes); (2) behind (more strikes than balls); and (3) the pitch count is even. The data were partitioned accordingly, and three predictive models for each of the four pitches were developed and evaluated. (Brock, 2015). 
+
+Based on the previous studies, this paper will look at several factors that affect a pitcher's pitch selection. This paper will look at count, inning, batter handedness (batting right or left), previous play outcome, and previous pitch.  I will use random forests and k-NN and compare those results with a naïve Bayes model for pitch prediction.
+
+
+##Methods:
+###Data Extraction
+In order to procure my data, I used R programming software, and the pitchRx package.  I was able to download the data for Major League Baseball gameday server, known as pitchF/x, which was established in 2008.  I downloaded all data for 2014 and 2015.  This data contained for tables, two of which I'll be using to query my data on.  The pitches data, includes pitcher name, handedness, pitch start speed, angle of pitch, starting location of pitch, ending location of pitch, gamedaylink (primary key with event num), pitcher number, and a few other things as well.  The other set of data included information about the batter.  This information included (but was not limited to) batter name, batter handedness, batting against pitcher, at bat description, balls, strikes, and outs.  The data was downloaded written into weekly csv's (my computer didn't have the memory to take the entire season at once), then each week was appended to the previous week.  The separate tables were then joined on their primary keys (gameday, num).  
+
+##Algorithms
+###kNN
+k-Nearest Neighbor, is an algorithm, that plots out points on a x/y axis.  As you pick a point, the algorithm picks a preselected amount of nearest points, to that event, and codes it to the majority of its closest   neighbors. After some research I found the package knncat, that can handle categorical data very well.  
+![image k-NN nearest neighbors](http://nikbearbrown.com/YouTube/MachineLearning/M06/k-Nearest_Neighbors.png)
+
+
+###Random Forests
+Random Forests is a decision tree approach to a categorical situation.  If it's sunny, do we play outside, but only if it's over 65 degrees, and only if it is not too windy.  
+![image decision tree](https://upload.wikimedia.org/wikipedia/commons/4/48/DecisionCalcs.jpg)
+Decision trees are good at using categories to split up the data, and decide if one thing happens, then there is a likely chance another might happen.
+
+###Naive Bayes
+Naïve Bayes, is the standard Bayesian algorithm that the other algorithms I mentioned are loosely based off.  Bayes is a more general way at looking at things. 
+Naive Bayes is a simple technique for constructing classifiers: models that assign class labels to problem instances, represented as vectors of feature values, where the class labels are drawn from some finite set. It is not a single algorithm for training such classifiers, but a family of algorithms based on a common principle: all naive Bayes classifiers assume that the value of a particular feature is independent of the value of any other feature, given the class variable. For example, a fruit may be considered to be an apple if it is red, round, and about 10 cm in diameter. A naive Bayes classifier considers each of these features to contribute independently to the probability that this fruit is an apple, regardless of any possible correlations between the color, roundness and diameter features.
+-Naïve Bayes, Wikipedia April 12, 2016
+
+##Results:
+
+Results for Corey Kluber and Madison Bumgarner on knncat
+
+```{r}
+#Corey Kluber pitch prediction table
+kluber_knncat$table;
+
+#Madison Bumgarner's pitch prediction table
+MadBum_knncat$table
+
+
+ knn_cat_result
+
+```
+
+Results for Corey Kluber Random Forest test
+
+```{r}
+#Corey Kluber pitch prediction table
+
+kluber_RF$table
+
+#Madison Bumgarner pitch prediction
+MadBum_RF$table
+
+RF_result
+```
+
+Results for Naïve Bayes
+
+```{r}
+#Corey Kluber pitch prediction table
+
+kluber_nb$table
+
+#Madison Bumgarner pitch prediction
+MadBum_nb$table
+
+nb_result
+```
+##Conclusion:
+
+As we look at the confusion matrices produced for each pitcher we see that we have some mixed results. The random forest evaluation gave us the best results (Kluber 37.5%,   Bumgarner 37%), however the P-values were not significant. The k-nearest neighbors model was slightly less successful at predicting pitches for Corey Kluber, but it was significant, although it was worse at both levels of accuracy and P-value for Madison Bumgarner.  The naïve bayes model had a slight improvement of accuracy for Corey Kluber (38.9% to 37.5% for random forest), but was less accurate for Madison Bumgarner (29.8%), than either of his two other algorithms. 
+
+This study shows only a weak correlation between the factors of pitch type and inning, outs, count, batter stance, and previous pitch.  Future studies should include more dependent variables, such as runners on base, runners in scoring position, day or night games, catcher-pitcher combo, hitter's batting average, and  hitter's slugging percentage. 
+
+
+
+##References
+1.	Chew, Jonathon, (2016). "Apple Just Struck a Huge Deal with Major League Baseball" March 30, 2016,         fortune.com, http://fortune.com/2016/03/30/mlb-apple-ipad-pro/
+2.	Gartheeban G, et.al, (2012). "Predicting the Next Pitch", MIT Sloan Sports Analytics Conference 2012
+http://theebgar.net/wp-content/uploads/2011/04/Predict-the-next-pitch.pdf
+3.	Attarian, A, (2013). "A Comparison of Feature Selection and Classification Algorithms in Identifying Baseball Pitches", Proceedings of the International MultiConference of Engineers and Computer Scientists 2013 Vol I,, March 2013
+http://www.iaeng.org/publication/IMECS2013/IMECS2013_pp263-268.pdf
+
+4.	Bock, Joel R.(2015) "Pitch Sequence Complexity and Long-Term Pitcher Performance" Journal of Sports, March 2, 2015
+5.	Anonymous, "Naïve Bayes" Wikipedia https://en.wikipedia.org/wiki/Naive_Bayes_classifier  April 11, 2016. 
+
+
+
+##Appendix
+Pitch Type Definitions
+FA = fastball
+FF = four-seam fastball
+FT = two-seam fastball
+FC = fastball (cutter)
+FS / SI / SF = fastball (sinker, split-fingered)
+SL = slider
+CH = changeup
+CB / CU = curveball
+KC = knuckle-curve
+KN = knuckleball
+EP = eephus
+UN / XX = unidentified
+PO / FO = pitch out
+
+
+
+
+
